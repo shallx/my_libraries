@@ -11,7 +11,7 @@ void main() {
 
 class Table {
   String tableName = '';
-  List columns = [];
+  List _columns = [];
 
   Table(this.tableName);
 
@@ -24,20 +24,19 @@ class Table {
   }
 
   Table float(String columnName, [bool isNull, String defaultValue]) {
-    return this.addColumn(columnName, 'FLOAT', isNull, defaultValue);
+    return this.addColumn(columnName, 'REAL', isNull, defaultValue);
   }
 
   Table timestamps([String timestampName]) {
     timestampName ??= 'created_at';
-    this.columns.add(
+    this._columns.add(
         '$timestampName TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
 
     return this;
   }
 
-  Table primaryId([String id]) {
-    id ??= 'id';
-    this.columns.add('$id INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY');
+  Table primaryId([String id = 'id']) {
+    this._columns.add('$id INTEGER PRIMARY KEY AUTOINCREMENT');
     return this;
   }
 
@@ -50,17 +49,17 @@ class Table {
     if (defaultValue != null) {
       s += ' DEFAULT $defaultValue';
     }
-    columns.add(s);
+    _columns.add(s);
     return this;
   }
 
   dynamic createTable() {
     String s = 'CREATE TABLE $tableName (';
-    int length = columns.length - 1;
+    int length = _columns.length - 1;
     for (int i = 0; i < length; i++) {
-      s += columns[i] + ',';
+      s += _columns[i] + ',';
     }
-    s += columns[length] + ')';
+    s += _columns[length] + ')';
     return s;
   }
 }
